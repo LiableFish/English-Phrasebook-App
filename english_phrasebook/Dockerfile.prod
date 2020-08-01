@@ -1,0 +1,73 @@
+###########
+# BUILDER #
+###########
+
+# pull official base image
+FROM python:3.7.3-alpine as builder
+
+# set work directory
+WORKDIR /usr/src/english_phrasebook
+
+# set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# lint
+RUN pip install --upgrade pip
+RUN pip install flake8
+COPY . .
+RUN flake8 --ignore=E501,F401 .
+
+# install psycopg2 dependencies
+RUN apk update \
+    && apk add postgresql-dev gcc python3-dev musl-dev \
+    # and Pillow dependencies
+     jpeg-dev zlib-dev
+
+# install dependencies
+COPY ./requirements.txt .
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/english_phrasebook/wheels -r requirements.txt
+
+
+#########
+# FINAL #
+#########
+
+# pull official base image
+FROM python:3.7.3-alpine
+
+# create directory for the app user
+RUN mkdir -p /home/english_phrasebook
+
+# create the app user
+RUN addgroup -S english_phrasebook && adduser -S english_phrasebook -G english_phrasebook
+
+# create the appropriate directories
+ENV HOME=/home/english_phrasebook
+ENV APP_HOME=/home/english_phrasebook/web
+RUN mkdir $APP_HOME
+RUN mkdir $APP_HOME/staticfiles
+RUN mkdir $APP_HOME/mediafiles
+RUN mkdir $APP_HOME/locale
+WORKDIR $APP_HOME
+
+# install dependencies
+RUN apk update && apk add libpq gcc jpeg-dev zlib-dev libmagic gettext
+COPY --from=builder /usr/src/english_phrasebook/wheels /wheels
+COPY --from=builder /usr/src/english_phrasebook/requirements.txt .
+RUN pip install --no-cache /wheels/*
+
+# copy entrypoint-prod.sh
+COPY ./entrypoint.prod.sh $APP_HOME
+
+# copy project
+COPY . $APP_HOME
+
+# chown all the files to the app user
+RUN chown -R english_phrasebook:english_phrasebook $APP_HOME
+
+# change to the app user
+USER english_phrasebook
+
+# run entrypoint.prod.sh
+ENTRYPOINT ["/home/english_phrasebook/web/entrypoint.prod.sh"]

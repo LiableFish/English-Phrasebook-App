@@ -1,0 +1,40 @@
+version: '3.7'
+
+services:
+  web:
+    build:
+      context: ./english_phrasebook
+      dockerfile: Dockerfile.prod
+    image: liablefish/phrasebook
+    command: gunicorn english_phrasebook.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - static_volume:/home/english_phrasebook/web/staticfiles
+      - media_volume:/home/english_phrasebook/web/mediafiles
+    expose:
+      - 8000
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - db
+  db:
+    image: postgres:10.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env.prod.db
+  nginx:
+    build: ./nginx
+    image: liablefish/phrasebook
+    volumes:
+      - static_volume:/home/english_phrasebook/web/staticfiles
+      - media_volume:/home/english_phrasebook/web/mediafiles
+    ports:
+      - 1337:80
+    depends_on:
+      - web
+
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:

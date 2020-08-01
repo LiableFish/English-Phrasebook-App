@@ -1,0 +1,19 @@
+<h1>Welcome to the English Phrasebook app developed with Django</h1>
+
+<h2>About app:</h2>
+there is som text
+
+<h3>There are some urls you can use:</h3>
+
+<ul>
+    <li><a href="{% url 'admin:index' %}">Link to the admin panel</a></li>
+    <li><a href="{% url 'categories-list' %}">GET request to see categories list</a></li>
+    <li><a href="{% url 'levels-list' %}">GET request to see levels list</a></li>
+    <li>
+        <a href="{% url 'themes-list' %}">GET request to see themes list</a>
+        (it also accept query params "category" and "level")
+    </li>
+    <li><a href="{% url 'theme-detail' 0 %}">GET request to see theme detail</a></li>
+    <li><a href="{% url 'word-detail' 0 %}">GET request to see word detail</a></li>
+</ul>
+
