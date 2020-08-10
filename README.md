@@ -11,7 +11,7 @@ English Phrasebook app developed with Django
 ```
 $ docker-compose up -d --build
 ```
-## Prdouction
+## Production
 ```
 $ docker-compose -f docker-compose.prod.yml up -d --build
 ```
