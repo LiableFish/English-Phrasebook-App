@@ -9,7 +9,6 @@ from django.dispatch import receiver
 from django.template.defaultfilters import filesizeformat
 from django.utils.deconstruct import deconstructible
 from django.utils.safestring import mark_safe
-from django.utils.translation import gettext_lazy as _
 
 
 @deconstructible
@@ -18,10 +17,10 @@ class FileValidator(object):
     Validate max/min size and content type of files using python-magic module.
     """
     error_messages = {
-        'max_size': ('Ensure this file size is not greater than %(max_size)s.'
-                     ' Your file size is %(size)s.'),
-        'min_size': ('Ensure this file size is not less than %(min_size)s. '
-                     'Your file size is {size}.'),
+        'max_size': 'Ensure this file size is not greater than %(max_size)s.'
+                    ' Your file size is %(size)s.',
+        'min_size': 'Ensure this file size is not less than %(min_size)s. '
+                    'Your file size is {size}.',
         'content_type': 'Files of type %(content_type)s are not supported.',
     }
 
@@ -79,8 +78,8 @@ class PathWithName:
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=200, unique=True)
-    icon = models.ImageField(upload_to=PathWithName('icons'), blank=True, null=True)
+    name = models.CharField(max_length=200, unique=True, verbose_name='Name')
+    icon = models.ImageField(upload_to=PathWithName('icons'), blank=True, null=True, verbose_name='Icon file')
 
     def icon_tag(self):
         if self.icon:
@@ -93,24 +92,20 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
-    class Meta:
-        verbose_name = _('сategory')
-        verbose_name_plural = _('categories')
-
 
 class Level(models.Model):
-    code = models.CharField(max_length=2, unique=True)
-    name = models.CharField(max_length=100, unique=True)
+    code = models.CharField(max_length=2, unique=True, verbose_name='Level\'s code')
+    name = models.CharField(max_length=100, unique=True, verbose_name='Level\'s name')
 
     def __str__(self):
         return self.name
 
 
 class Theme(models.Model):
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    level = models.ForeignKey(Level, on_delete=models.CASCADE)
-    name = models.CharField(max_length=200, unique=True)
-    photo = models.ImageField(upload_to=PathWithName('photos'), blank=True, null=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Category\'s name')
+    level = models.ForeignKey(Level, on_delete=models.CASCADE, verbose_name='Level\'s name')
+    name = models.CharField(max_length=200, unique=True, verbose_name='Theme\'s name')
+    photo = models.ImageField(upload_to=PathWithName('photos'), blank=True, null=True, verbose_name='Photo file')
 
     def photo_tag(self):
         if self.photo:
@@ -127,12 +122,12 @@ class Theme(models.Model):
 class Word(models.Model):
     validate_sound = FileValidator(max_size=52428800, content_types=('audio/mpeg', 'audio/vnd.wave', 'audio/ogg'))
 
-    theme = models.ForeignKey(Theme, related_name='words', on_delete=models.CASCADE)
-    name = models.CharField(max_length=200, verbose_name='phrase', unique=True)
-    translation = models.CharField(max_length=200)
-    example = models.CharField(max_length=200)
+    theme = models.ForeignKey(Theme, related_name='words', on_delete=models.CASCADE, verbose_name='Theme\'s name')
+    name = models.CharField(max_length=200, unique=True, verbose_name='Phrase')
+    translation = models.CharField(max_length=200, verbose_name='Translation')
+    example = models.CharField(max_length=200, blank=True, verbose_name='Usage example')
     sound = models.FileField(upload_to=PathWithName('sounds'), validators=[validate_sound],
-                             blank=True, null=True,
+                             blank=True, null=True, verbose_name='Sound file',
                              help_text='Allowed type - .mp3, .wav, .ogg')
 
     def transcription(self):

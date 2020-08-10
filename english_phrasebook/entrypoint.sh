@@ -22,7 +22,4 @@ User = get_user_model();
 User.objects.create_superuser('$ADMIN', '', '$PASSWORD')"
 echo "Admin created"
 
-echo "Generate messages..."
-python manage.py makemessages -l ru --ignore templates/admin/index.html --ignore */settings.py
-echo "Messages generated"
 exec "$@"

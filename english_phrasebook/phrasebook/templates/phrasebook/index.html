@@ -1,7 +1,8 @@
 <h1>Welcome to the English Phrasebook app developed with Django</h1>
 
 <h2>About app:</h2>
-there is som text
+App contains admin page for dealing with Category, Level, Theme and Word models.
+It also accepts some API requests with "Secret" header permission (for DEBUG=False).
 
 <h3>There are some urls you can use:</h3>
 
@@ -13,7 +14,8 @@ there is som text
         <a href="{% url 'themes-list' %}">GET request to see themes list</a>
         (it also accept query params "category" and "level")
     </li>
-    <li><a href="{% url 'theme-detail' 0 %}">GET request to see theme detail</a></li>
-    <li><a href="{% url 'word-detail' 0 %}">GET request to see word detail</a></li>
+    <li><a href="{% url 'theme-detail' 1 %}">GET request to see theme detail</a></li>
+    <li><a href="{% url 'word-detail' 1 %}">GET request to see word detail</a></li>
 </ul>
+
 

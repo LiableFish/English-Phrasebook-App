@@ -17,21 +17,24 @@ def index(request):
 class CategoriesList(generics.ListAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    authentication_classes = []
-    permission_classes = [CheckSecretAPI]
+
+    if not settings.DEBUG:
+        permission_classes = [CheckSecretAPI]
 
 
 class LevelsList(generics.ListAPIView):
     queryset = Level.objects.all()
     serializer_class = LevelSerializer
 
-    permission_classes = [CheckSecretAPI]
+    if not settings.DEBUG:
+        permission_classes = [CheckSecretAPI]
 
 
 class ThemesList(generics.ListAPIView):
     serializer_class = ThemeListSerializer
 
-    permission_classes = [CheckSecretAPI]
+    if not settings.DEBUG:
+        permission_classes = [CheckSecretAPI]
 
     def get_queryset(self):
         """
@@ -51,7 +54,8 @@ class ThemeDetail(generics.RetrieveAPIView):
     queryset = Theme.objects.all()
     serializer_class = ThemeDetailSerializer
 
-    permission_classes = [CheckSecretAPI]
+    if not settings.DEBUG:
+        permission_classes = [CheckSecretAPI]
 
 
 class WordDetail(generics.RetrieveAPIView):

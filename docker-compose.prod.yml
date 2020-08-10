@@ -5,7 +5,6 @@ services:
     build:
       context: ./english_phrasebook
       dockerfile: Dockerfile.prod
-    image: liablefish/phrasebook
     command: gunicorn english_phrasebook.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - static_volume:/home/english_phrasebook/web/staticfiles
@@ -24,7 +23,6 @@ services:
       - ./.env.prod.db
   nginx:
     build: ./nginx
-    image: liablefish/phrasebook
     volumes:
       - static_volume:/home/english_phrasebook/web/staticfiles
       - media_volume:/home/english_phrasebook/web/mediafiles

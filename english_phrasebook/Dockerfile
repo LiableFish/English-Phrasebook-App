@@ -14,7 +14,7 @@ RUN apk update \
     # and Pillow dependencies
      jpeg-dev zlib-dev \
     # and magic dependencies
-     libmagic gettext
+     libmagic
 
 # install dependencies
 RUN pip install --upgrade pip
@@ -23,7 +23,7 @@ RUN pip install -r requirements.txt
 
 # copy entrypoint.sh
 COPY ./entrypoint.sh .
-#RUN chmod +x ./entrypoint.sh
+RUN chmod +x ./entrypoint.sh
 
 # copy project
 COPY . .
