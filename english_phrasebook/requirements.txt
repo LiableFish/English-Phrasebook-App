@@ -1,6 +1,5 @@
 Django==3.0.8
 djangorestframework==3.11.0
-django-rosetta==0.9.3
 psycopg2-binary==2.8.5
 Pillow==7.2.0
 python-magic==0.4.18

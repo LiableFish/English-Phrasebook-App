@@ -35,7 +35,6 @@ ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS').split(' ')
 
 INSTALLED_APPS = [
     'rest_framework',
-    # 'rosetta',
     'phrasebook.apps.PhrasebookConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -53,7 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'django.middleware.locale.LocaleMiddleware'
+    'django.middleware.locale.LocaleMiddleware'
 ]
 
 ROOT_URLCONF = 'english_phrasebook.urls'

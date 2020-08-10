@@ -9,9 +9,7 @@
 
 {% block nav-global %}{% endblock %}
 
-{% comment 'For django-rosetta using' %}
 {% block userlinks %}
-<a href="/admin/rosetta">Rosetta</a> /
 {{ block.super }}
 / <form action="{% url 'set_language' %}" method="post" style="display:inline">{% csrf_token %}
     <input name="next" type="hidden" value="{{ redirect_to }}">
@@ -27,4 +25,3 @@
     </select>
 </form>
 {% endblock %}
-{% endcomment %}

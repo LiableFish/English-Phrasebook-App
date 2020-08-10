@@ -23,7 +23,7 @@ RUN pip install -r requirements.txt
 
 # copy entrypoint.sh
 COPY ./entrypoint.sh .
-#RUN chmod +x ./entrypoint.sh
+RUN chmod +x ./entrypoint.sh
 
 # copy project
 COPY . .

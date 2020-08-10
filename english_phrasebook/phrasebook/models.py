@@ -18,11 +18,11 @@ class FileValidator(object):
     Validate max/min size and content type of files using python-magic module.
     """
     error_messages = {
-        'max_size': ('Ensure this file size is not greater than %(max_size)s.'
-                     ' Your file size is %(size)s.'),
-        'min_size': ('Ensure this file size is not less than %(min_size)s. '
-                     'Your file size is {size}.'),
-        'content_type': 'Files of type %(content_type)s are not supported.',
+        'max_size': _('Ensure this file size is not greater than %(max_size)s.'
+                      ' Your file size is %(size)s.'),
+        'min_size': _('Ensure this file size is not less than %(min_size)s. '
+                      'Your file size is {size}.'),
+        'content_type': _('Files of type %(content_type)s are not supported.'),
     }
 
     def __init__(self, max_size=None, min_size=None, content_types=()):
@@ -79,16 +79,16 @@ class PathWithName:
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=200, unique=True)
-    icon = models.ImageField(upload_to=PathWithName('icons'), blank=True, null=True)
+    name = models.CharField(max_length=200, unique=True, verbose_name=_('Name'))
+    icon = models.ImageField(upload_to=PathWithName('icons'), blank=True, null=True, verbose_name=_('Icon file'))
 
     def icon_tag(self):
         if self.icon:
             return mark_safe(f'<img src="{self.icon.url}" width="100" height="100" />')
         else:
-            return 'Icon has not downloaded yet'
+            return _('Icon has not downloaded yet')
 
-    icon_tag.short_description = 'Icon image'
+    icon_tag.short_description = _('Icon image')
 
     def __str__(self):
         return self.name
@@ -99,59 +99,71 @@ class Category(models.Model):
 
 
 class Level(models.Model):
-    code = models.CharField(max_length=2, unique=True)
-    name = models.CharField(max_length=100, unique=True)
+    code = models.CharField(max_length=2, unique=True, verbose_name=_('Level\'s code'))
+    name = models.CharField(max_length=100, unique=True, verbose_name=_('Level\'s name'))
 
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = _('level')
+        verbose_name_plural = _('levels')
+
 
 class Theme(models.Model):
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    level = models.ForeignKey(Level, on_delete=models.CASCADE)
-    name = models.CharField(max_length=200, unique=True)
-    photo = models.ImageField(upload_to=PathWithName('photos'), blank=True, null=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name=_('Category\'s name'))
+    level = models.ForeignKey(Level, on_delete=models.CASCADE, verbose_name=_('Level\'s name'))
+    name = models.CharField(max_length=200, unique=True, verbose_name=_('Theme\'s name'))
+    photo = models.ImageField(upload_to=PathWithName('photos'), blank=True, null=True, verbose_name=_('Photo file'))
 
     def photo_tag(self):
         if self.photo:
             return mark_safe(f'<img src="{self.photo.url}" width="100" height="100" />')
         else:
-            return 'Photo has not downloaded yet.'
+            return _('Photo has not downloaded yet.')
 
-    photo_tag.short_description = 'Photo image'
+    photo_tag.short_description = _('Photo image')
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = _('theme')
+        verbose_name_plural = _('themes')
 
 
 class Word(models.Model):
     validate_sound = FileValidator(max_size=52428800, content_types=('audio/mpeg', 'audio/vnd.wave', 'audio/ogg'))
 
-    theme = models.ForeignKey(Theme, related_name='words', on_delete=models.CASCADE)
-    name = models.CharField(max_length=200, verbose_name='phrase', unique=True)
-    translation = models.CharField(max_length=200)
-    example = models.CharField(max_length=200)
+    theme = models.ForeignKey(Theme, related_name='words', on_delete=models.CASCADE, verbose_name=_('Theme\'s name'))
+    name = models.CharField(max_length=200, unique=True, verbose_name=_('phrase'))
+    translation = models.CharField(max_length=200, verbose_name=_('Translation'))
+    example = models.CharField(max_length=200, blank=True, verbose_name=_('Usage example'))
     sound = models.FileField(upload_to=PathWithName('sounds'), validators=[validate_sound],
-                             blank=True, null=True,
+                             blank=True, null=True, verbose_name=_('Sound file'),
                              help_text='Allowed type - .mp3, .wav, .ogg')
 
     def transcription(self):
         if self.name:
             return ipa.convert(self.name)
         else:
-            return 'Phrase has not be added yet'
+            return _('Phrase has not be added yet')
 
     def sound_tag(self):
         if self.sound:
             return mark_safe(f'<audio src="{self.sound.url}" controls>Your browser does not '
                              f'support the <code>audio</code> element.</audio>')
         else:
-            return 'Audio has not downloaded yet.'
+            return _('Audio has not downloaded yet.')
 
-    sound_tag.short_description = 'Audio sample'
+    sound_tag.short_description = _('Audio sample')
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = _('word')
+        verbose_name_plural = _('words')
 
 
 def auto_delete_file_on_delete(model, filename):
