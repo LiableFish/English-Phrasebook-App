@@ -1,8 +1,10 @@
 # English-Phrasebook-App
-English Phrasebook app developed with Django
+Test task for backend Junior-developer by [Doubletapp](https://doubletapp.ai/).
 
 ## Using:
+- django
 - rest-framework
+- postgresql
 - gunicorne
 - nginx
 - docker-compose
